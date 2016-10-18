@@ -32,6 +32,8 @@ for houzzItem in houzzItems:
     houzzLink = houzzLink.split("/")
     houzzId = houzzLink[4]
     houzzTitle = houzzLink[5];
+    houzzTitle = houzzTitle.replace('-',' ')
+    houzzTitle = houzzTitle.title()
     houzzData[counter] = (houzzId, houzzTitle)
     #print counter
     #print houzzId
@@ -96,5 +98,5 @@ for houzzSubItem in houzzSubItems:
         houzzSubPrice = "Similar interior design"
         similarDesigns +=1
     print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPrice)
-print ("\nThere are %d items depicted in %s which was sum up to cost $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
+print ("\nThere are %d items present in %s which sum up to cost $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
 
