@@ -48,23 +48,35 @@ soup = BeautifulSoup(content, "html.parser")
 houzzSubItems = soup.find_all('div', {'class': 'space-meta'})
 #print houzzSubItems
 count = 0
-houzzSubData = {}
+similarProducts = 0
+similarDesigns = 0
+interiorCounter = 0
+cost = 0
 for houzzSubItem in houzzSubItems:
     count +=1
     """houzzSubLink = houzzSubItem.a["href"]"""
     houzzSubTitle = houzzSubItem.findChildren()[0].get_text()
     try:
-        houzzSubPrice2 = len(houzzSubItem.findChildren()[1])
+        houzzSubLen = len(houzzSubItem.findChildren()[1])
+        try:
+            houzzSubPrice = houzzSubItem.findChildren()[1].get_text()
+            if houzzSubPrice[0] != "$":
+                 houzzSubPrice = "Similar product"
+                 similarProducts +=1
+            else:
+                interiorCounter +=1
+        except IndexError:
+            houzzSubPrice = "Similar interior design"
+            similarDesigns +=1
     except IndexError:
-        houzzSubPrice2 = 5
-    try:
-        houzzSubPrice = houzzSubItem.findChildren()[1].get_text()
-    except IndexError:
-        houzzSubPrice = "VIGNESH"
+        houzzSubLen = -1
+        houzzSubPrice = "Similar interior design"
+        similarDesigns +=1
     # houzzSubPrice = houzzSubItem.findChildren()[1]
     """if (len(houzzSubItem.findChildren()) > 0):
         houzzSubPrice = houzzSubItem.findChildren()[1].findChildren()[0]
     else:
         houzzSubPrice = houzzSubItem.findChildren()[1]"""
-    print ("%d. %s: %d -- %s") % (count, houzzSubTitle, houzzSubPrice2, houzzSubPrice)
+    print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPrice)
+print ("%d items depicted will cost $%d, %d similar Products, %d similar Designs.") % (interiorCounter, cost, similarProducts, similarDesigns)
 
