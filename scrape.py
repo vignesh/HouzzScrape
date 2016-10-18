@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib2
+import unicodedata
+import re
 
 search = (raw_input("1.Kitchen\n2.Bath\n3.Bedroom\n4.Living\n5.Outdoor\nWhat cateogory would you like to browse? "))
 if search == '1':
@@ -64,6 +66,27 @@ for houzzSubItem in houzzSubItems:
                  houzzSubPrice = "Similar product"
                  similarProducts +=1
             else:
+                sep = " "
+                houzzSubPrice = houzzSubPrice.split(sep,1)[0]
+                houzzSubPriceFloat = houzzSubPrice[1:]
+                dec = "."
+                houzzSubPriceFloat = houzzSubPriceFloat.split(dec,1)[0]
+                print type(houzzSubPriceFloat)
+                houzzSubPriceFloat = unicodedata.normalize('NFKD', houzzSubPriceFloat).encode('ascii','ignore')
+                print type(houzzSubPriceFloat)
+                houzzSubPriceFloat = houzzSubPriceFloat.replace(",", "");
+                houzzSubPriceFloat = int(houzzSubPriceFloat)
+                """floatvar = None
+                    if re.match("^\d+?\.\d+?$", houzzSubPriceFloat) is None:
+                    houzzSubPriceFloat = int(houzzSubPriceFloat)"""
+                """if isinstance(houzzSubPriceFloat, str):
+                    houzzSubPriceFloat = float(houzzSubPriceFloat)"""
+                """else:
+                    floatvar = float(houzzSubPriceFloat)
+                print (type(floatvar))"""
+                print houzzSubPriceFloat
+                print type(houzzSubPriceFloat)
+                cost += houzzSubPriceFloat
                 interiorCounter +=1
         except IndexError:
             houzzSubPrice = "Similar interior design"
