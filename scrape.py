@@ -22,7 +22,7 @@ content = urllib2.urlopen(url).read()
 soup = BeautifulSoup(content, "html.parser")
 
 houzzItems = soup.find_all('div', {'class': 'ic whiteCard xl portrait'})
-print "These are the top results for your search."
+print "\nThese are the top results for your search."
 counter = 0
 houzzData = {}
 for houzzItem in houzzItems:
@@ -32,17 +32,17 @@ for houzzItem in houzzItems:
     houzzLink = houzzLink.split("/")
     houzzId = houzzLink[4]
     houzzTitle = houzzLink[5];
-    houzzData[counter] = houzzId
+    houzzData[counter] = (houzzId, houzzTitle)
     #print counter
     #print houzzId
     print ("%d. %s") % (counter, houzzTitle)
     #houzzLink = houzzItem.findChildren()[0].findChildren()[0].findChildren()[0]
     #houzzTitle = houzzItem.findChildren()[0]
 
-choice = (raw_input("Which of the results do you want breakdown? "))
+choice = (raw_input("\nChoose an interior design for more details. "))
 choice = int(choice)
 
-url = "http://www.houzz.com/photos/" + houzzData[choice]
+url = "http://www.houzz.com/photos/" + houzzData[choice][0]
 content = urllib2.urlopen(url).read()
 soup = BeautifulSoup(content, "html.parser")
 #print soup2.prettify()
@@ -71,9 +71,9 @@ for houzzSubItem in houzzSubItems:
                 houzzSubPriceFloat = houzzSubPrice[1:]
                 dec = "."
                 houzzSubPriceFloat = houzzSubPriceFloat.split(dec,1)[0]
-                print type(houzzSubPriceFloat)
+                #print type(houzzSubPriceFloat)
                 houzzSubPriceFloat = unicodedata.normalize('NFKD', houzzSubPriceFloat).encode('ascii','ignore')
-                print type(houzzSubPriceFloat)
+                #print type(houzzSubPriceFloat)
                 houzzSubPriceFloat = houzzSubPriceFloat.replace(",", "");
                 houzzSubPriceFloat = int(houzzSubPriceFloat)
                 """floatvar = None
@@ -84,8 +84,8 @@ for houzzSubItem in houzzSubItems:
                 """else:
                     floatvar = float(houzzSubPriceFloat)
                 print (type(floatvar))"""
-                print houzzSubPriceFloat
-                print type(houzzSubPriceFloat)
+                #print houzzSubPriceFloat
+                #print type(houzzSubPriceFloat)
                 cost += houzzSubPriceFloat
                 interiorCounter +=1
         except IndexError:
@@ -95,11 +95,6 @@ for houzzSubItem in houzzSubItems:
         houzzSubLen = -1
         houzzSubPrice = "Similar interior design"
         similarDesigns +=1
-    # houzzSubPrice = houzzSubItem.findChildren()[1]
-    """if (len(houzzSubItem.findChildren()) > 0):
-        houzzSubPrice = houzzSubItem.findChildren()[1].findChildren()[0]
-    else:
-        houzzSubPrice = houzzSubItem.findChildren()[1]"""
     print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPrice)
-print ("%d items depicted will cost $%d, %d similar Products, %d similar Designs.") % (interiorCounter, cost, similarProducts, similarDesigns)
+print ("\nThere are %d items depicted in %s which was sum up to cost $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
 
