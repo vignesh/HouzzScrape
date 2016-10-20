@@ -59,28 +59,26 @@ for houzzSubItem in houzzSubItems:
     try:
         houzzSubLen = len(houzzSubItem.findChildren()[1]) #check if there is a child
         try:
-            houzzSubPrice = houzzSubItem.findChildren()[1].get_text()
-            if houzzSubPrice[0] != "$": #check if first letter is a '$'
-                 houzzSubPrice = "Similar product"
+            houzzInfo = houzzSubItem.findChildren()[1].get_text()
+            if houzzInfo[0] != "$": #check if first letter is a '$'
+                 houzzInfo = "Similar product"
                  similarProducts +=1 #increase similar products
             else:
-                sep = " "
-                houzzSubPrice = houzzSubPrice.split(sep,1)[0] #remove all characeters after a space
-                houzzSubPriceFloat = houzzSubPrice[1:]
-                dec = "."
-                houzzSubPriceFloat = houzzSubPriceFloat.split(dec,1)[0] #remove charceters after decimal
-                houzzSubPriceFloat = unicodedata.normalize('NFKD', houzzSubPriceFloat).encode('ascii','ignore') #convert unciode to string
-                houzzSubPriceFloat = houzzSubPriceFloat.replace(",", ""); #remove commas
-                houzzSubPriceFloat = int(houzzSubPriceFloat) #convert string to float
-                cost += houzzSubPriceFloat #add product price to total cost
+                space = " "
+                houzzInfo = houzzInfo.split(space,1)[0] #remove all characeters after a space
+                houzzSubPrice = houzzInfo[1:] #removes first character
+                decimal = "."
+                houzzSubPrice = houzzSubPrice.split(decimal,1)[0] #remove charceters after decimal
+                houzzSubPrice = unicodedata.normalize('NFKD', houzzSubPrice).encode('ascii','ignore') #convert unciode to string
+                houzzSubPrice = houzzSubPrice.replace(",", ""); #remove commas
+                houzzSubPrice = int(houzzSubPrice) #convert string to float
+                cost += houzzSubPrice #add product price to total cost
                 interiorCounter +=1 #increase interior counter
         except IndexError:
-            houzzSubPrice = "Similar interior design"
+            houzzInfo = "Similar interior design"
             similarDesigns +=1 #increase similar design counter
     except IndexError:
-        houzzSubLen = -1
-        houzzSubPrice = "Similar interior design"
+        houzzInfo = "Similar interior design"
         similarDesigns +=1 #increase similar design counter
-    print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPrice)
+    print ("%d. %s: %s") % (count, houzzSubTitle, houzzInfo)
 print ("\nThere are %d items present in %s which sum up to a total cost of $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
-
