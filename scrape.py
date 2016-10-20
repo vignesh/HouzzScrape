@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 import urllib2
 import unicodedata
-import re
 
+#Ask user for category
 search = (raw_input("1.Kitchen\n2.Bath\n3.Bedroom\n4.Living\n5.Outdoor\nWhat cateogory would you like to browse? "))
 if search == '1':
     category = "kitchen"
@@ -17,40 +17,37 @@ elif search == '5':
 else:
     category = ""
 
+#create and oepn new URL
 url = "http://www.houzz.com/photos/" + category
 content = urllib2.urlopen(url).read()
 soup = BeautifulSoup(content, "html.parser")
 
-houzzItems = soup.find_all('div', {'class': 'ic whiteCard xl portrait'})
 print "\nThese are the top results for your search."
+houzzItems = soup.find_all('div', {'class': 'ic whiteCard xl portrait'})
 counter = 0
 houzzData = {}
 for houzzItem in houzzItems:
-    counter +=1;
-    houzzLink = houzzItem.a["href"]
-    houzzLink = str(houzzLink)
-    houzzLink = houzzLink.split("/")
+    counter +=1; #counter for dictionary index
+    houzzLink = houzzItem.a["href"] #grab href link
+    houzzLink = houzzLink.split("/") #split Link by '/'
     houzzId = houzzLink[4]
     houzzTitle = houzzLink[5];
-    houzzTitle = houzzTitle.replace('-',' ')
-    houzzTitle = houzzTitle.title()
-    houzzData[counter] = (houzzId, houzzTitle)
-    #print counter
-    #print houzzId
+    houzzTitle = houzzTitle.replace('-',' ') #replace '-' with space
+    houzzTitle = houzzTitle.title() #capitalize first character in every word
+    houzzData[counter] = (houzzId, houzzTitle) #at counter index insert a tuple with id and title
     print ("%d. %s") % (counter, houzzTitle)
-    #houzzLink = houzzItem.findChildren()[0].findChildren()[0].findChildren()[0]
-    #houzzTitle = houzzItem.findChildren()[0]
 
+#ask user for interior choice
 choice = (raw_input("\nChoose an interior design for more details. "))
 choice = int(choice)
 
+#create new link for interior
 url = "http://www.houzz.com/photos/" + houzzData[choice][0]
 content = urllib2.urlopen(url).read()
 soup = BeautifulSoup(content, "html.parser")
-#print soup2.prettify()
 
+#finds all items on page
 houzzSubItems = soup.find_all('div', {'class': 'space-meta'})
-#print houzzSubItems
 count = 0
 similarProducts = 0
 similarDesigns = 0
@@ -58,45 +55,30 @@ interiorCounter = 0
 cost = 0
 for houzzSubItem in houzzSubItems:
     count +=1
-    """houzzSubLink = houzzSubItem.a["href"]"""
-    houzzSubTitle = houzzSubItem.findChildren()[0].get_text()
+    houzzSubTitle = houzzSubItem.findChildren()[0].get_text() #grab item title
     try:
-        houzzSubLen = len(houzzSubItem.findChildren()[1])
+        houzzSubLen = len(houzzSubItem.findChildren()[1]) #check if there is a child
         try:
             houzzSubPrice = houzzSubItem.findChildren()[1].get_text()
-            if houzzSubPrice[0] != "$":
+            if houzzSubPrice[0] != "$": #check if first letter is a '$'
                  houzzSubPrice = "Similar product"
-                 similarProducts +=1
+                 similarProducts +=1 #increase similar products
             else:
-                sep = " "
-                houzzSubPrice = houzzSubPrice.split(sep,1)[0]
-                houzzSubPriceFloat = houzzSubPrice[1:]
-                dec = "."
-                houzzSubPriceFloat = houzzSubPriceFloat.split(dec,1)[0]
-                #print type(houzzSubPriceFloat)
-                houzzSubPriceFloat = unicodedata.normalize('NFKD', houzzSubPriceFloat).encode('ascii','ignore')
-                #print type(houzzSubPriceFloat)
-                houzzSubPriceFloat = houzzSubPriceFloat.replace(",", "");
-                houzzSubPriceFloat = int(houzzSubPriceFloat)
-                """floatvar = None
-                    if re.match("^\d+?\.\d+?$", houzzSubPriceFloat) is None:
-                    houzzSubPriceFloat = int(houzzSubPriceFloat)"""
-                """if isinstance(houzzSubPriceFloat, str):
-                    houzzSubPriceFloat = float(houzzSubPriceFloat)"""
-                """else:
-                    floatvar = float(houzzSubPriceFloat)
-                print (type(floatvar))"""
-                #print houzzSubPriceFloat
-                #print type(houzzSubPriceFloat)
-                cost += houzzSubPriceFloat
-                interiorCounter +=1
+                space = " "
+                houzzSubPrice = houzzSubPrice.split(space,1)[0] #remove all characters after a space
+                houzzSubPrice = houzzSubPrice[1:] #removes first character
+                decimal = "."
+                houzzSubPrice = houzzSubPrice.split(decimal,1)[0] #remove charcters after decimal
+                houzzSubPrice = unicodedata.normalize('NFKD', houzzSubPrice).encode('ascii','ignore') #convert unciode to string
+                houzzSubPrice = houzzSubPrice.replace(",", ""); #remove commas
+                houzzSubPrice = int(houzzSubPrice) #convert string to float
+                cost += houzzSubPrice #add product price to total cost
+                interiorCounter +=1 #increase interior
         except IndexError:
             houzzSubPrice = "Similar interior design"
-            similarDesigns +=1
+            similarDesigns +=1 #increase similar design counter
     except IndexError:
-        houzzSubLen = -1
         houzzSubPrice = "Similar interior design"
-        similarDesigns +=1
+        similarDesigns +=1 #increase similar design counter
     print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPrice)
-print ("\nThere are %d items present in %s which sum up to cost $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
-
+print ("\nThere are %d items present in %s which sum up to a total cost of $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
