@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import urllib2
 import unicodedata
 
-#Ask user for category
+#ask user for category
 search = (raw_input("1.Kitchen\n2.Bath\n3.Bedroom\n4.Living\n5.Outdoor\nWhat cateogory would you like to browse? "))
 if search == '1':
     category = "kitchen"
@@ -64,22 +64,23 @@ for houzzSubItem in houzzSubItems:
                  houzzSubPrice = "Similar product"
                  similarProducts +=1 #increase similar products
             else:
-                space = " "
-                houzzSubPrice = houzzSubPrice.split(space,1)[0] #remove all characters after a space
-                houzzSubPricePrint = houzzSubPrice
-                houzzSubPrice = houzzSubPrice[1:] #removes first character
-                decimal = "."
-                houzzSubPrice = houzzSubPrice.split(decimal,1)[0] #remove charcters after decimal
-                houzzSubPrice = unicodedata.normalize('NFKD', houzzSubPrice).encode('ascii','ignore') #convert unciode to string
-                houzzSubPrice = houzzSubPrice.replace(",", ""); #remove commas
-                houzzSubPrice = int(houzzSubPrice) #convert string to float
-                cost += houzzSubPrice #add product price to total cost
-                interiorCounter +=1 #increase interior
+                sep = " "
+                houzzSubPrice = houzzSubPrice.split(sep,1)[0] #remove all characeters after a space
+                houzzSubPriceFloat = houzzSubPrice[1:]
+                dec = "."
+                houzzSubPriceFloat = houzzSubPriceFloat.split(dec,1)[0] #remove charceters after decimal
+                houzzSubPriceFloat = unicodedata.normalize('NFKD', houzzSubPriceFloat).encode('ascii','ignore') #convert unciode to string
+                houzzSubPriceFloat = houzzSubPriceFloat.replace(",", ""); #remove commas
+                houzzSubPriceFloat = int(houzzSubPriceFloat) #convert string to float
+                cost += houzzSubPriceFloat #add product price to total cost
+                interiorCounter +=1 #increase interior counter
         except IndexError:
             houzzSubPrice = "Similar interior design"
             similarDesigns +=1 #increase similar design counter
     except IndexError:
+        houzzSubLen = -1
         houzzSubPrice = "Similar interior design"
         similarDesigns +=1 #increase similar design counter
-    print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPricePrint)
+    print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPrice)
 print ("\nThere are %d items present in %s which sum up to a total cost of $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
+
