@@ -66,6 +66,7 @@ for houzzSubItem in houzzSubItems:
             else:
                 space = " "
                 houzzSubPrice = houzzSubPrice.split(space,1)[0] #remove all characters after a space
+                houzzSubPricePrint = houzzSubPrice
                 houzzSubPrice = houzzSubPrice[1:] #removes first character
                 decimal = "."
                 houzzSubPrice = houzzSubPrice.split(decimal,1)[0] #remove charcters after decimal
@@ -80,5 +81,5 @@ for houzzSubItem in houzzSubItems:
     except IndexError:
         houzzSubPrice = "Similar interior design"
         similarDesigns +=1 #increase similar design counter
-    print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPrice)
+    print ("%d. %s: %s") % (count, houzzSubTitle, houzzSubPricePrint)
 print ("\nThere are %d items present in %s which sum up to a total cost of $%d. There are also %d similar products offered, and %d similar interior designs.") % (interiorCounter, houzzData[choice][1], cost, similarProducts, similarDesigns)
